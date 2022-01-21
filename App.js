@@ -1,62 +1,37 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-import React from 'react';
+import React, { createContext } from 'react';
 import type { Node } from 'react';
-import {
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { View, TouchableOpacity, useColorScheme } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { dimensions, Ctx } from './utilities/deviceInfo';
 
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import CardHolder from './components/cards/CardHolder';
+import NewBoulder from './components/add/NewBoulder';
+import DetailedView from './components/cards/DetailedView';
+import { Card } from 'react-native-paper';
 
-const Section = ({ children, title }): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
+const boulders = [
+  {
+    grade: 'V1',
+    name: 'Simple jugs',
+  },
+  {
+    grade: 'V1',
+    name: 'Simple jugs',
+  },
+  {
+    grade: 'V2',
+    name: 'Crimpy',
+  },
+  {
+    grade: 'V2',
+    name: 'Pink slopers',
+  },
+];
 
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}
-      >
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}
-      >
-        {children}
-      </Text>
-    </View>
-  );
-};
+const Stack = createNativeStackNavigator();
 
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -64,63 +39,30 @@ const App: () => Node = () => {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  const boulders = [
-    {
-      grade: 'V1',
-      name: 'Simple jugs',
-    },
-    {
-      grade: 'V1',
-      name: 'Simple jugs',
-    },
-    {
-      grade: 'V2',
-      name: 'Crimpy',
-    },
-    {
-      grade: 'V2',
-      name: 'Pink slopers',
-    },
-  ];
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <CardHolder boulders={boulders} />
-      {/*<FlatList*/}
-      {/*<FlatList*/}
-      {/*  data={[1, 2, 3]}*/}
-      {/*  renderItem={() => (*/}
-      {/*    <View*/}
-      {/*      style={{*/}
-      {/*        height: 500,*/}
-      {/*        width: 100,*/}
-      {/*        backgroundColor: 'blue',*/}
-      {/*        margin: 10,*/}
-      {/*      }}*/}
-      {/*    />*/}
-      {/*  )}*/}
-      {/*/>*/}
-    </SafeAreaView>
+    <Ctx.Provider value={dimensions}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Card">
+          <Stack.Screen
+            name="Card"
+            component={CardHolder}
+            initialParams={{ boulders: boulders }}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="New" component={NewBoulder} title="New Boulder" />
+          <Stack.Screen name="Detailed" component={DetailedView} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Ctx.Provider>
+    // <SafeAreaView style={backgroundStyle}>
+    //   <CardHolder boulders={boulders} />
+    // </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+const ViewA = () => (
+  <View style={{ height: 100, width: 100, backgroundColor: 'blue' }} />
+);
 
 export default App;
